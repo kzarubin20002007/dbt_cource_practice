@@ -11,4 +11,6 @@ select
     passenger_name,
     contact_data
 from
-    {{ ref('stg_flights__tickets') }}
+    {{ ref('stg_flights__tickets') }} A
+where
+    not exists (select 1 from {{ ref('staff') }} B where A.passenger_id = B.passenger_id)
