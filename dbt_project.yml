@@ -32,8 +32,17 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dbt_cource_practice:
     # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
+    intermediate:
+      flights:
+        +meta:
+          owner: "dbt_project_yml_file_owner@gmail.com"
+          year_created: 2025
+      +tags:
+        - "intermediate"
+    staging:
+      +tags:
+        - "staging"
 
 seeds:
-  schema: seeds
+  dbt_cource_practice:
+    schema: seeds
