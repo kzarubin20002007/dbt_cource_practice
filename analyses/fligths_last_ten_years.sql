@@ -1,8 +1,10 @@
-{% set current_date = '{{ run_started_at|string|truncate(10, True, "") }}' %}
+{% set current_date = run_started_at | string | truncate(10, True, "")   %}
+{% set current_year = run_started_at | string | truncate(4, True, "") | int  %}
+{% set prev_year = current_year - 10 %}
+
 SELECT 
-    count(*)
+    COUNT(*) as {{ adapter.quote('select some data') }}
 FROM
-    {{ ref('fct_flights') }} ff
+    {{ ref('fct_flights') }}
 WHERE 
-    ff.scheduled_departure::date
-    between current_date - interval '10 years' and current_date
+    scheduled_departure BETWEEN '{{ current_date }}' AND '{{ current_date | replace(current_year, prev_year) }}'
