@@ -2,20 +2,19 @@
     config(
         materialized = 'incremental',
         incremental_strategy = 'append',
-        on_schema_change = 'fail',
         tag = ['bookings']
     )
 }}
 
 select
-    book_ref,
+    {{bookref_to_bigint('book_ref')}} as book_ref,
     book_date,
-    total_amount::int,
+    {{ kopeck_to_ruble(column_name='total_amount') }} as total_amount,
     1 as some_amount
 
 from 
     {{ source('demo_src', 'bookings') }}
 {% if is_incremental() %}
 where
-    ('0x' || book_ref)::bigint > (select max(('0x' || book_ref)::bigint) from {{ this }})
+    {{bookref_to_bigint('book_ref')}} > (select max({{bookref_to_bigint('book_ref')}}) from {{ this }})
 {% endif %}
